@@ -1,6 +1,8 @@
 require 'gosu'
 
 require_relative './character'
+require_relative './map'
+require_relative './tile'
 
 class GameWindow < Gosu::Window
 
@@ -12,9 +14,10 @@ class GameWindow < Gosu::Window
   ESC = Gosu::Button::KbEscape
 
   def initialize
-    super 640, 480
+    super 360, 360
     self.caption = "Gosu article"
 
+    @map = Map.new(self, './assets/tilesetpkm.png')
     @player = Character.new(self, './assets/sprite.png')
   end
 
@@ -25,12 +28,13 @@ class GameWindow < Gosu::Window
     direction = :right if button_down? RIGHT
     direction = :up if button_down? UP
     direction = :down if button_down? DOWN
-    $key_pressed = !direction.empty?
-    @player.update(direction)
+
+    @player.update(direction, @map)
   end
 
   def draw
-    @player.draw(50, 50)
+    @player.draw
+    @map.draw
   end
 end
 
