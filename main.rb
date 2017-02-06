@@ -17,7 +17,7 @@ class GameWindow < Gosu::Window
     super 360, 360
     self.caption = "Gosu article"
 
-    @map = Map.new(self, './assets/tilesetpkm.png')
+    @map = Map.new(self, './assets/map.yml')
     @player = Character.new(self, './assets/sprite.png')
   end
 
@@ -33,8 +33,8 @@ class GameWindow < Gosu::Window
   end
 
   def draw
-    @player.draw
-    @map.draw
+    @player.draw(Map::WIDTH / 2, Map::HEIGHT / 2)
+    @map.draw(@player.x / 16, @player.y / 16)
   end
 end
 

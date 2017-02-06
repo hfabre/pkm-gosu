@@ -1,9 +1,11 @@
 class Character
+  attr_reader :x, :y
+
   SPRITE_SIZE = 16
-  FRAME_DELAY = 90 # ms
+  FRAME_DELAY = 90
   ANIMATION_NB = 4
   ZORDER = 2
-  SPEED = 1.5
+  SPEED = 4
 
   def initialize(window, sprite_path)
     @sprite = load_sprite_from_image(window, sprite_path)
@@ -33,9 +35,9 @@ class Character
     end
   end
 
-  def draw
+  def draw(pos_x, pos_y)
     return if done?
-    @sprite[@facing][@image_count].draw(@x, @y, ZORDER)
+    @sprite[@facing][@image_count].draw(pos_x, pos_y, ZORDER)
   end
 
   def done?

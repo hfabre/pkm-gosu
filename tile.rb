@@ -1,8 +1,8 @@
 class Tile
-  attr_reader :position
+  attr_reader :position, :name
 
-  def initialize(tileset, tile_pos, collidable: false)
-    @image = tileset[tile_pos]
+  def initialize(tile_name, tile_pos, collidable)
+    @name = tile_name
     @position = tile_pos
     @collidable = collidable
   end

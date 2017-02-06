@@ -1,49 +1,86 @@
 class Map
+  require 'psych'
 
-  TILE_SIZE = 16
-  WALL_POS = 18
-  FLOOR_POS = 13
   HEIGHT = 360
   WIDTH = 360
-  NUMBER_OF_LINE = HEIGHT / TILE_SIZE
 
   ZORDER = 1
 
-  def initialize(window, tiles_path)
-    @tileset = Gosu::Image.load_tiles(window, tiles_path, TILE_SIZE, TILE_SIZE, false)
-    @board = generate_board
+  def initialize(window, map_file)
+    load(window, map_file)
   end
 
-  def draw
-    @board.each_with_index do |line, height|
-      line.each_with_index do |tile, width|
-        @tileset[tile.position].draw(height * TILE_SIZE, width * TILE_SIZE, ZORDER)
+  def draw(cam_pos_x, cam_pos_y)
+    frame_board = viewable_board(cam_pos_x, cam_pos_y)
+    frame_board.each_with_index do |line, j|
+      line.each_with_index do |tile, i|
+        @tileset[tile.position].draw(i * @tile_size, j * @tile_size, ZORDER)
       end
     end
   end
 
   def blocked?(tile_y, tile_x)
-    tile = @board[tile_y / TILE_SIZE][tile_x / TILE_SIZE]
+    tile = @board[tile_y / @tile_size][tile_x / @tile_size]
     return true unless tile
     tile.collidable?
   end
 
   private
 
-  def generate_board
-    board = Array.new(NUMBER_OF_LINE, [])
+  def viewable_board(x, y)
+    y_range = (y.to_i - @sliced_view_size)..(y.to_i + @sliced_view_size)
+    x_range = (x.to_i - @sliced_view_size)..(x.to_i + @sliced_view_size)
 
-    board[0] = Array.new(NUMBER_OF_LINE, Tile.new(@tileset, WALL_POS, collidable: true))
-    (NUMBER_OF_LINE - 2).times do |i|
+    board = []
+
+    y_range.to_a.each do |j|
       line = []
-      line << Tile.new(@tileset, WALL_POS, collidable: true)
-      (NUMBER_OF_LINE - 2).times do
-        line << Tile.new(@tileset, FLOOR_POS)
+
+      x_range.to_a.each do |i|
+        p j, i
+        tile = get_tile(j, i)
+        p tile
+        line << tile
       end
-      line << Tile.new(@tileset, WALL_POS, collidable: true)
-      board[i + 1] = line
+
+      board << line
     end
-    board[NUMBER_OF_LINE - 1] = Array.new(NUMBER_OF_LINE, Tile.new(@tileset, WALL_POS, collidable: true))
+
     board
+  end
+
+  def load(window, map_file)
+    infos = Psych.load_file(map_file)['infos']
+
+    @tile_size = infos['tile_size']
+    @height = infos['map'].length + 1
+    @width = infos['map'].first.length + 1
+    @sliced_view_size = (@height / 2).floor
+    @tileset = Gosu::Image.load_tiles(window, infos['tileset'], @tile_size, @tile_size, false)
+
+    @tiles = []
+    infos['tiles'].each do |k, v|
+      @tiles << Tile.new(k.to_s, v['tile'], v['collide'])
+    end
+    @out_of_limit_tile = @tiles[infos['out_of_limit_tile']]
+
+
+    @board = infos['map'].map {|row| row.map {|tile| @tiles[tile]}}
+  end
+
+  def get_tile(x, y)
+    if out_of_width_limits?(x) || out_of_height_limits?(y)
+      @out_of_limit_tile
+    else
+      @board[y][x]
+    end
+  end
+
+  def out_of_width_limits?(x)
+    x > @width || x < 0
+  end
+
+  def out_of_height_limits?(x)
+    x > @height || x < 0
   end
 end
