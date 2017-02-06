@@ -1,8 +1,7 @@
 class Map
   require 'psych'
 
-  HEIGHT = 360
-  WIDTH = 360
+  attr_reader :width, :height
 
   ZORDER = 1
 
@@ -11,18 +10,18 @@ class Map
   end
 
   def draw(cam_pos_x, cam_pos_y)
-    frame_board = viewable_board(cam_pos_x, cam_pos_y)
+    frame_board = viewable_board(cam_pos_y, cam_pos_x)
     frame_board.each_with_index do |line, j|
       line.each_with_index do |tile, i|
-        @tileset[tile.position].draw(i * @tile_size, j * @tile_size, ZORDER)
+        @tileset[@tiles[tile].position].draw(j * @tile_size, i * @tile_size, ZORDER)
       end
     end
   end
 
   def blocked?(tile_y, tile_x)
-    tile = @board[tile_y / @tile_size][tile_x / @tile_size]
+    tile = @board[tile_y][tile_x]
     return true unless tile
-    tile.collidable?
+    @tiles[tile].collidable?
   end
 
   private
@@ -37,9 +36,7 @@ class Map
       line = []
 
       x_range.to_a.each do |i|
-        p j, i
         tile = get_tile(j, i)
-        p tile
         line << tile
       end
 
@@ -53,8 +50,8 @@ class Map
     infos = Psych.load_file(map_file)['infos']
 
     @tile_size = infos['tile_size']
-    @height = infos['map'].length + 1
-    @width = infos['map'].first.length + 1
+    @height = infos['map'].length
+    @width = infos['map'].first.length
     @sliced_view_size = (@height / 2).floor
     @tileset = Gosu::Image.load_tiles(window, infos['tileset'], @tile_size, @tile_size, false)
 
@@ -62,10 +59,10 @@ class Map
     infos['tiles'].each do |k, v|
       @tiles << Tile.new(k.to_s, v['tile'], v['collide'])
     end
-    @out_of_limit_tile = @tiles[infos['out_of_limit_tile']]
+    @out_of_limit_tile = infos['out_of_limit_tile']
 
 
-    @board = infos['map'].map {|row| row.map {|tile| @tiles[tile]}}
+    @board = infos['map']
   end
 
   def get_tile(x, y)
@@ -77,10 +74,10 @@ class Map
   end
 
   def out_of_width_limits?(x)
-    x > @width || x < 0
+    x > @width - 1 || x < 0
   end
 
   def out_of_height_limits?(x)
-    x > @height || x < 0
+    x > @height - 1 || x < 0
   end
 end

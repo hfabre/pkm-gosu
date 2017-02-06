@@ -5,13 +5,13 @@ class Character
   FRAME_DELAY = 90
   ANIMATION_NB = 4
   ZORDER = 2
-  SPEED = 4
+  SPEED = 0.5
 
   def initialize(window, sprite_path)
     @sprite = load_sprite_from_image(window, sprite_path)
     @facing = :down
     @image_count = 0
-    @x = @y = Map::HEIGHT / 2
+    @x = @y = window.height / 2 / SPRITE_SIZE
   end
 
   def update(direction, map)
@@ -20,11 +20,11 @@ class Character
         when :left
           @x -= SPEED unless map.blocked?(@y, @x - SPEED)
         when :right
-          @x += SPEED unless map.blocked?(@y, @x + SPEED + SPRITE_SIZE)
+          @x += SPEED unless map.blocked?(@y, @x + SPEED)
         when :up
           @y -= SPEED unless map.blocked?(@y - SPEED, @x)
         when :down
-          @y += SPEED unless map.blocked?(@y + SPEED + SPRITE_SIZE, @x)
+          @y += SPEED unless map.blocked?(@y + SPEED, @x)
       end
 
       @facing = direction
@@ -37,7 +37,7 @@ class Character
 
   def draw(pos_x, pos_y)
     return if done?
-    @sprite[@facing][@image_count].draw(pos_x, pos_y, ZORDER)
+    @sprite[@facing][@image_count].draw(pos_x * 16, pos_y * 16, ZORDER)
   end
 
   def done?
