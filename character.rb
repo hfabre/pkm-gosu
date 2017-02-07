@@ -27,6 +27,10 @@ class Character
           @y += SPEED unless map.blocked?(@y + SPEED, @x)
       end
 
+      if map.wrapper?(@y, @x)
+        @x, @y = map.get_wrapper_position(@y, @x)
+      end
+
       @facing = direction
       if frame_expired?
         @image_count += 1

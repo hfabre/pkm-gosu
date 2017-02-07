@@ -24,6 +24,18 @@ class Map
     @tiles[tile].collidable?
   end
 
+  def wrapper?(tile_y, tile_x)
+    tile = @board[tile_y][tile_x]
+    return false unless tile
+    @tiles[tile].wrapper?
+  end
+
+  def get_wrapper_position(tile_y, tile_x)
+    tile = @board[tile_y][tile_x]
+    return nil unless tile
+    @tiles[tile].wrapper_position
+  end
+
   private
 
   def viewable_board(x, y)
@@ -57,7 +69,7 @@ class Map
 
     @tiles = []
     infos['tiles'].each do |k, v|
-      @tiles << Tile.new(k.to_s, v['tile'], v['collide'])
+      @tiles << Tile.new(k.to_s, v.delete('tile'), v)
     end
     @out_of_limit_tile = infos['out_of_limit_tile']
 
