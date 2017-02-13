@@ -15,8 +15,8 @@ class SceneManager
   end
 
   def set_scene(scene_name)
-    @current_scene.unload if @current_scene.respond_to? :unload
+    @current_scene&.unload
     @current_scene = @scenes[scene_name]
-    @current_scene.load if @current_scene.respond_to? :load
+    @current_scene&.load
   end
 end
