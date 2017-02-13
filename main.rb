@@ -3,38 +3,40 @@ require 'gosu'
 require_relative './character'
 require_relative './map'
 require_relative './tile'
+require_relative './scene_manager'
+require_relative './game_scene'
 
 class GameWindow < Gosu::Window
 
+  ESC = Gosu::Button::KbEscape
   LEFT = Gosu::Button::KbLeft
   UP = Gosu::Button::KbUp
   DOWN = Gosu::Button::KbDown
   RIGHT = Gosu::Button::KbRight
 
-  ESC = Gosu::Button::KbEscape
-
   def initialize
     super 360, 360
     self.caption = "Test"
 
-    @map = Map.new(self, './assets/map.yml')
-    @player = Character.new(self, './assets/sprite.png')
+    game_scene = GameScene.new(self)
+    SceneManager.instance.add_scene(:game_scene, game_scene)
+    SceneManager.instance.set_scene(:game_scene)
   end
 
   def update
     self.close if button_down? ESC
+
     direction = ''
     direction = :left if button_down? LEFT
     direction = :right if button_down? RIGHT
     direction = :up if button_down? UP
     direction = :down if button_down? DOWN
 
-    @player.update(direction, @map)
+    SceneManager.instance.current_scene.update(direction)
   end
 
   def draw
-    @player.draw(self.width / 2 / 16, self.height / 2 / 16)
-    @map.draw(@player.x + 1, @player.y + 1)
+    SceneManager.instance.current_scene.draw(self)
   end
 end
 
