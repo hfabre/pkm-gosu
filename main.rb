@@ -1,4 +1,6 @@
 require 'gosu'
+require 'singleton'
+require 'psych'
 
 require_relative './character'
 require_relative './map'

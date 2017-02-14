@@ -21,7 +21,7 @@ class GameScene < Scene
   end
 
   def draw(window)
-    @player.draw(window.width / 2 / 16, window.height / 2 / 16)
+    @player.draw(window.width, window.height)
     @map.draw(@player.x + 1, @player.y + 1)
   end
 end

@@ -1,5 +1,3 @@
-require 'singleton'
-
 class SceneManager
   include Singleton
 

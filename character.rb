@@ -41,7 +41,8 @@ class Character
 
   def draw(pos_x, pos_y)
     return if done?
-    @sprite[@facing][@image_count].draw(pos_x * 16, pos_y * 16, ZORDER)
+    # Middle of game window
+    @sprite[@facing][@image_count].draw(pos_x / 2, pos_y / 2, ZORDER)
   end
 
   def done?

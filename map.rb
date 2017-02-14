@@ -1,5 +1,4 @@
 class Map
-  require 'psych'
 
   attr_reader :width, :height
 
