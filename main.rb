@@ -6,8 +6,10 @@ require_relative './character'
 require_relative './map'
 require_relative './tile'
 require_relative './scene'
+require_relative './menu'
 require_relative './scene_manager'
 require_relative './game_scene'
+require_relative './game_menu_scene'
 
 class GameWindow < Gosu::Window
 
@@ -17,8 +19,12 @@ class GameWindow < Gosu::Window
     super 360, 360
     self.caption = "Test"
 
+    @font = Gosu::Font.new(self, Gosu.default_font_name, 20)
+
+    game_menu_scene = GameMenuScene.new(self)
     game_scene = GameScene.new(self)
     SceneManager.instance.add_scene(:game_scene, game_scene)
+    ceneManager.instance.add_scene(:game_scene, game_menu_scene)
     SceneManager.instance.set_scene(:game_scene)
   end
 
@@ -38,6 +44,11 @@ class GameWindow < Gosu::Window
 
   def button_up(id)
     SceneManager.instance.current_scene.button_down(id)
+  end
+
+  def write(x, y, str, options={})
+    font = options.delete(:font) || @font
+    font.draw(str, x, y, ZOrder::MENU_FONT, 1.0, 1.0, Gosu::Color::BLACK)
   end
 end
 
