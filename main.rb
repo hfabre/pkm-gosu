@@ -7,13 +7,18 @@ require_relative './map'
 require_relative './tile'
 require_relative './scene'
 require_relative './menu'
+require_relative './state'
+require_relative './state_manager'
+require_relative './menu_item'
 require_relative './scene_manager'
 require_relative './game_scene'
-require_relative './game_menu_scene'
+require_relative './game_menu_state'
 
 class GameWindow < Gosu::Window
 
   ESC = Gosu::Button::KbEscape
+
+  ZORDER_FONT = 6
 
   def initialize
     super 360, 360
@@ -21,10 +26,8 @@ class GameWindow < Gosu::Window
 
     @font = Gosu::Font.new(self, Gosu.default_font_name, 20)
 
-    game_menu_scene = GameMenuScene.new(self)
     game_scene = GameScene.new(self)
     SceneManager.instance.add_scene(:game_scene, game_scene)
-    ceneManager.instance.add_scene(:game_scene, game_menu_scene)
     SceneManager.instance.set_scene(:game_scene)
   end
 
@@ -39,16 +42,18 @@ class GameWindow < Gosu::Window
   end
 
   def button_down(id)
-    SceneManager.instance.current_scene.button_down(id)
+    puts "#{id} downed"
+    SceneManager.instance.current_scene.button_down(self, id)
   end
 
   def button_up(id)
-    SceneManager.instance.current_scene.button_down(id)
+    puts "#{id} uped"
+    SceneManager.instance.current_scene.button_up(self, id)
   end
 
   def write(x, y, str, options={})
     font = options.delete(:font) || @font
-    font.draw(str, x, y, ZOrder::MENU_FONT, 1.0, 1.0, Gosu::Color::BLACK)
+    font.draw(str, x, y, ZORDER_FONT, 1.0, 1.0, Gosu::Color::BLACK)
   end
 end
 

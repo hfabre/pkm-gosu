@@ -1,5 +1,4 @@
-class Scene
-
+class State
   def initialize(window)
   end
 
@@ -13,11 +12,5 @@ class Scene
   end
 
   def button_up(window, id)
-  end
-
-  def load
-  end
-
-  def unload
   end
 end

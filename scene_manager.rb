@@ -13,8 +13,13 @@ class SceneManager
   end
 
   def set_scene(scene_name)
+    p "Setting scene: #{scene_name}"
     @current_scene&.unload
     @current_scene = @scenes[scene_name]
     @current_scene&.load
+  end
+
+  def find(scene_name)
+    @scenes[scene_name]
   end
 end
