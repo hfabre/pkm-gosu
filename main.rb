@@ -13,6 +13,7 @@ require_relative './menu_item'
 require_relative './scene_manager'
 require_relative './game_scene'
 require_relative './game_menu_state'
+require_relative './moving_state'
 
 class GameWindow < Gosu::Window
 
@@ -21,7 +22,7 @@ class GameWindow < Gosu::Window
   ZORDER_FONT = 6
 
   def initialize
-    super 360, 360
+    super(16*21, 16*21)
     self.caption = "Test"
 
     @font = Gosu::Font.new(self, Gosu.default_font_name, 20)
@@ -42,12 +43,10 @@ class GameWindow < Gosu::Window
   end
 
   def button_down(id)
-    puts "#{id} downed"
     SceneManager.instance.current_scene.button_down(self, id)
   end
 
   def button_up(id)
-    puts "#{id} uped"
     SceneManager.instance.current_scene.button_up(self, id)
   end
 

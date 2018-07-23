@@ -5,7 +5,7 @@ class Character
   FRAME_DELAY = 90
   ANIMATION_NB = 4
   ZORDER = 2
-  SPEED = 0.5
+  SPEED = 0.3
 
   def initialize(window, sprite_path)
     @sprite = load_sprite_from_image(window, sprite_path)
@@ -42,7 +42,7 @@ class Character
   def draw(pos_x, pos_y)
     return if done?
     # Middle of game window
-    @sprite[@facing][@image_count].draw(pos_x / 2, pos_y / 2, ZORDER)
+    @sprite[@facing][@image_count].draw((pos_x / 2) - 8, (pos_y / 2) - 8, ZORDER)
   end
 
   def done?
@@ -52,18 +52,18 @@ class Character
   private
 
   def frame_expired?
-   now = Gosu.milliseconds
-   @last_frame ||= now
-   if (now - @last_frame) > FRAME_DELAY
-     @last_frame = now
-   else
-    false
-   end
+    now = Gosu.milliseconds
+    @last_frame ||= now
+
+    if (now - @last_frame) > FRAME_DELAY
+      @last_frame = now
+    else
+      false
+    end
   end
 
   def load_sprite_from_image(window, sprite_path)
     sprites = Gosu::Image.load_tiles(window, sprite_path, SPRITE_SIZE, SPRITE_SIZE, false)
-    {left: sprites[4..7], right: sprites[12..15],
-      down: sprites[0..3], up: sprites[8..11]}
+    { left: sprites[4..7], right: sprites[12..15], down: sprites[0..3], up: sprites[8..11] }
   end
 end

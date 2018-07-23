@@ -13,6 +13,7 @@ class GameScene < Scene
     @state_manager = StateManager.new
     @state_manager.add_state(:game_menu, GameMenuState.new(window, @state_manager, :main))
     @state_manager.add_state(:main, State.new(window))
+    @state_manager.add_state(:moving, MovingState.new(window, @player, @map, @state_manager))
 
     @state_manager.set_state(:main)
   end
@@ -24,14 +25,17 @@ class GameScene < Scene
     direction = :up if window.button_down? UP
     direction = :down if window.button_down? DOWN
 
-    @player.update(direction, @map) if @state_manager.current_state == @state_manager.find(:main)
-    @state_manager.current_state.update(window)
+    if @state_manager.current_state == @state_manager.find(:main) && !direction.empty?
+      @state_manager.set_state(:moving)
+    end
+
+    @state_manager.current_state.update(window, direction)
   end
 
   def draw(window)
     @state_manager.current_state.draw(window)
     @player.draw(window.width, window.height)
-    @map.draw(@player.x + 1, @player.y + 1)
+    @map.draw(@player.x + 2, @player.y + 2)
   end
 
   def button_down(window, id)
