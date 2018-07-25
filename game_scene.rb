@@ -35,7 +35,7 @@ class GameScene < Scene
   def draw(window)
     @state_manager.current_state.draw(window)
     @player.draw(window.width, window.height)
-    @map.draw(@player.x + 2, @player.y + 2)
+    @map.draw(@player.x.to_i, @player.y.to_i)
   end
 
   def button_down(window, id)

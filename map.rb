@@ -5,14 +5,16 @@ class Map
   ZORDER = 1
 
   def initialize(window, map_file)
+    @window_height = window.height
+    @window_width = window.width
     load(window, map_file)
   end
 
-  def draw(cam_pos_x, cam_pos_y)
-    frame_board = viewable_board(cam_pos_y, cam_pos_x)
-    frame_board.each_with_index do |line, j|
-      line.each_with_index do |tile, i|
-        @tileset[@tiles[tile].position].draw(j * @tile_size, i * @tile_size, ZORDER)
+  def draw(center_width, center_height)
+    board = viewable_board(center_width, center_height)
+    board.each_with_index do |line, y|
+      line.each_with_index do |tile, x|
+        @tileset[@tiles[tile].position].draw(x * (@tile_size), y * (@tile_size), ZORDER)
       end
     end
   end
@@ -37,25 +39,45 @@ class Map
 
   private
 
-  def viewable_board(x, y)
-    y_range = (y.to_i - @sliced_view_size)..(y.to_i + @sliced_view_size)
-    x_range = (x.to_i - @sliced_view_size)..(x.to_i + @sliced_view_size)
-
+  def viewable_board(pos_x, pos_y)
     board = []
 
-    y_range.to_a.each do |j|
+    offset_x = @window_width / @tile_size / 2
+    offset_y = @window_height / @tile_size / 2
+
+    line_range = ((pos_x - offset_x)..(pos_x + offset_x)).to_a
+    column_range = ((pos_y - offset_y)..(pos_y + offset_y)).to_a
+
+    column_range.each do |y|
       line = []
-
-      x_range.to_a.each do |i|
-        tile = get_tile(j, i)
-        line << tile
+      line_range.each do |x|
+        line << get_tile(x, y)
       end
-
       board << line
     end
 
     board
   end
+
+  # def viewable_board(x, y)
+  #   y_range = (y.to_i - @sliced_view_size)..(y.to_i + @sliced_view_size)
+  #   x_range = (x.to_i - @sliced_view_size)..(x.to_i + @sliced_view_size)
+  #
+  #   board = []
+  #
+  #   y_range.to_a.each do |j|
+  #     line = []
+  #
+  #     x_range.to_a.each do |i|
+  #       tile = get_tile(j, i)
+  #       line << tile
+  #     end
+  #
+  #     board << line
+  #   end
+  #
+  #   board
+  # end
 
   def load(window, map_file)
     infos = Psych.load_file(map_file)['infos']
@@ -63,7 +85,6 @@ class Map
     @tile_size = infos['tile_size']
     @height = infos['map'].length
     @width = infos['map'].first.length
-    @sliced_view_size = (@height / 2).floor
     @tileset = Gosu::Image.load_tiles(window, infos['tileset'], @tile_size, @tile_size, false)
 
     @tiles = []
