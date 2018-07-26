@@ -22,7 +22,7 @@ class GameWindow < Gosu::Window
   ZORDER_FONT = 6
 
   def initialize
-    super(16*21, 16*21)
+    super(16*31, 16*21, false)
     self.caption = "Test"
 
     @font = Gosu::Font.new(self, Gosu.default_font_name, 20)

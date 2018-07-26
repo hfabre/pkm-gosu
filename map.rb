@@ -14,7 +14,7 @@ class Map
     board = viewable_board(center_width, center_height)
     board.each_with_index do |line, y|
       line.each_with_index do |tile, x|
-        @tileset[@tiles[tile].position].draw(x * (@tile_size), y * (@tile_size), ZORDER)
+        @tileset[@tiles[tile].position].draw(x * @tile_size, y * @tile_size, ZORDER)
       end
     end
   end

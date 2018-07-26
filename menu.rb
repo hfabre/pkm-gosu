@@ -1,7 +1,7 @@
 class Menu
 
   ZORDER = 4
-  PREV = Gosu::KB_BACKSPACE
+  PREV = Gosu::KbBackspace
   ENTER = Gosu::KbEnter
   UP = Gosu::Button::KbUp
   DOWN = Gosu::Button::KbDown

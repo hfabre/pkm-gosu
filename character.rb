@@ -18,7 +18,10 @@ class Character
   def update(direction, x, y)
     @x = x
     @y = y
+    update_animation(direction)
+  end
 
+  def update_animation(direction)
     unless direction.empty?
       @facing = direction
       if frame_expired?
